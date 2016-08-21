@@ -81,14 +81,6 @@ func limitFunc(β int) func(int) int {
 	return func(n int) int { return int(math.Log(float64(n)) / base) }
 }
 
-// breakpoint computes the balance value breakpoint of a tree of n nodes.
-func (t *Tree) breakpoint(n int) int {
-	if bw := (n*t.β + maxBalance) / fracLimit; bw > 0 {
-		return bw
-	}
-	return 1
-}
-
 // Insert adds key into the tree if it is not already present, and reports
 // whether a new node was added.
 func (t *Tree) Insert(key Key) bool {
@@ -182,7 +174,7 @@ func (t *Tree) Remove(key Key) bool {
 	t.root = del
 	if ok {
 		t.size--
-		if bw := t.breakpoint(t.max); t.size < bw {
+		if bw := (t.max*t.β + maxBalance) / fracLimit; t.size < bw {
 			t.root = rewrite(t.root, t.size)
 			t.max = t.size
 		}
