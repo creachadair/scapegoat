@@ -24,14 +24,15 @@ func ExampleTree_Insert() {
 }
 
 func ExampleTree_Remove() {
+	key := W("Aloysius")
 	tree := New(1)
-	tree.Insert(W("Aloysius"))
-	fmt.Println("before:", tree.Lookup(W("Aloysius")) != nil)
-	tree.Remove(W("Aloysius"))
-	fmt.Println("after:", tree.Lookup(W("Aloysius")) != nil)
+	fmt.Println("inserted:", tree.Insert(key))
+	fmt.Println("removed:", tree.Remove(key))
+	fmt.Println("re-removed:", tree.Remove(key))
 	// Output:
-	// before: true
-	// after: false
+	// inserted: true
+	// removed: true
+	// re-removed: false
 }
 
 func ExampleTree_Lookup() {
