@@ -155,3 +155,5 @@ func TestRemoval(t *testing.T) {
 		t.Errorf("Tree after removal is incorrect (-got, +want)\n%s", diff)
 	}
 }
+
+// TODO(fromberger): Add benchmarks.
