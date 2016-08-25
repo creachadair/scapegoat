@@ -209,13 +209,13 @@ func (n *node) remove(key Key) (_ *node, ok bool) {
 // Len reports the number of elements stored in the tree.
 func (t *Tree) Len() int { return t.size }
 
-// Lookup returns the matching key from the tree, or nil if absent.
-func (t *Tree) Lookup(key Key) Key {
+// Lookup reports whether key is present in the tree, and returns it if so.
+func (t *Tree) Lookup(key Key) (Key, bool) {
 	n, ok := t.root.findLeast(key)
 	if n != nil && ok {
-		return n.key
+		return n.key, true
 	}
-	return nil
+	return nil, false
 }
 
 // Inorder traverses t inorder and invokes f for each key until either f

@@ -37,11 +37,13 @@ func ExampleTree_Remove() {
 
 func ExampleTree_Lookup() {
 	tree := NewKeys(1, W("mom"))
-	fmt.Println("hit:", tree.Lookup(W("mom")))
-	fmt.Println("miss:", tree.Lookup(W("dad")))
+	hit, ok := tree.Lookup(W("mom"))
+	fmt.Printf("%v, %v\n", hit, ok)
+	miss, ok := tree.Lookup(W("dad"))
+	fmt.Printf("%v, %v\n", miss, ok)
 	// Output:
-	// hit: mom
-	// miss: <nil>
+	// mom, true
+	// <nil>, false
 }
 
 func ExampleTree_Inorder() {
