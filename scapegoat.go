@@ -222,7 +222,7 @@ func (t *Tree) Lookup(key Key) Key {
 // returns false or no further keys are available.
 func (t *Tree) Inorder(f func(Key) bool) { inorder(t.root, f) }
 
-// Min returns the smallest key in the tree, or nil if the tree is empty.
+// Min returns the minimum key in the tree, or nil if the tree is empty.
 func (t *Tree) Min() Key {
 	if t.root == nil {
 		return nil
