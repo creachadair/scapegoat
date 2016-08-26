@@ -16,36 +16,6 @@ func (n *node) size() int {
 	return 1 + n.left.size() + n.right.size()
 }
 
-// findLeast returns the node containing the smallest key not less than key.
-// The flag reports whether it is equal.
-func (n *node) findLeast(key Key) (*node, bool) {
-	if n == nil {
-		return nil, false
-	}
-
-	var next *node
-	before := key.Less(n.key)
-	if before {
-		next = n.left
-	} else if n.key.Less(key) {
-		next = n.right
-	} else {
-		return n, true // exact match
-	}
-	if match, ok := next.findLeast(key); match != nil {
-		return match, ok
-	}
-
-	// If we reach here, the subtree where key would exist is not present.  The
-	// key we want, if it exists, is the first one along the path up to the
-	// root that is after key.
-
-	if before {
-		return n, false // it's me!
-	}
-	return nil, false // keep looking
-}
-
 // flatten extracts the nodes rooted at n into a slice in order, and returns
 // the resulting slice. The he results are appended to it, thus allowing the
 // caller to preallocate storage:
@@ -107,7 +77,7 @@ func popMinRight(root *node) *node {
 	return goat
 }
 
-// inorder visits the subtree under root inorder, calling f until f returns false.
+// inorder visits the subtree under n inorder, calling f until f returns false.
 func (n *node) inorder(f func(Key) bool) bool {
 	if n == nil {
 		return true
@@ -117,4 +87,40 @@ func (n *node) inorder(f func(Key) bool) bool {
 		return false
 	}
 	return n.right.inorder(f)
+}
+
+// pathTo returns the sequence of nodes beginning at n leading to key, if key
+// is present. If key was found, its node is the last element of the path.
+func (n *node) pathTo(key Key) []*node {
+	var path []*node
+	cur := n
+	for cur != nil {
+		path = append(path, cur)
+		if key.Less(cur.key) {
+			cur = cur.left
+		} else if cur.key.Less(key) {
+			cur = cur.right
+		} else {
+			break
+		}
+	}
+	return path
+}
+
+// inorderAfter visits the elements of the subtree under n not less than key
+// inorder, calling f for each until f returns false.
+func (n *node) inorderAfter(key Key, f func(Key) bool) {
+	// Find the path from the root to key. Any nodes greater than or equal to
+	// key must be on or to the right of this path.
+	path := n.pathTo(key)
+	for i := len(path) - 1; i >= 0; i-- {
+		cur := path[i]
+		if cur.key.Less(key) {
+			continue
+		} else if ok := f(cur.key); !ok {
+			return
+		} else if ok := cur.right.inorder(f); !ok {
+			return
+		}
+	}
 }
