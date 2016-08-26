@@ -108,13 +108,13 @@ func popMinRight(root *node) *node {
 }
 
 // inorder visits the subtree under root inorder, calling f until f returns false.
-func inorder(root *node, f func(Key) bool) bool {
-	if root == nil {
+func (n *node) inorder(f func(Key) bool) bool {
+	if n == nil {
 		return true
-	} else if ok := inorder(root.left, f); !ok {
+	} else if ok := n.left.inorder(f); !ok {
 		return false
-	} else if ok := f(root.key); !ok {
+	} else if ok := f(n.key); !ok {
 		return false
 	}
-	return inorder(root.right, f)
+	return n.right.inorder(f)
 }
