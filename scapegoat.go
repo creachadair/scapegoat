@@ -211,9 +211,15 @@ func (t *Tree) Len() int { return t.size }
 
 // Lookup reports whether key is present in the tree, and returns it if so.
 func (t *Tree) Lookup(key Key) (Key, bool) {
-	n, ok := t.root.findLeast(key)
-	if n != nil && ok {
-		return n.key, true
+	cur := t.root
+	for cur != nil {
+		if key.Less(cur.key) {
+			cur = cur.left
+		} else if cur.key.Less(key) {
+			cur = cur.right
+		} else {
+			return cur.key, true
+		}
 	}
 	return nil, false
 }
