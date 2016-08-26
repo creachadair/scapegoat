@@ -228,6 +228,11 @@ func (t *Tree) Lookup(key Key) (Key, bool) {
 // returns false or no further keys are available.
 func (t *Tree) Inorder(f func(Key) bool) { t.root.inorder(f) }
 
+// InorderAfter traverses t inorder, considering only keys equal to or after
+// key, and invokes f for each key until either f returns false or no further
+// keys are available.
+func (t *Tree) InorderAfter(key Key, f func(Key) bool) { t.root.inorderAfter(key, f) }
+
 // Min returns the minimum key in the tree, or nil if the tree is empty.
 func (t *Tree) Min() Key {
 	if t.root == nil {

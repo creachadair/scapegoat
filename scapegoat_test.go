@@ -19,10 +19,6 @@ var (
 	dotFile    = flag.String("dot", "", "Emit DOT output to this file")
 )
 
-type word string
-
-func (w word) Less(key Key) bool { return w < key.(word) }
-
 func (n *node) height() int {
 	if n == nil {
 		return 0
@@ -40,7 +36,7 @@ func makeTree(β int, input string) (*Tree, []string) {
 	tree := New(β)
 	words := strings.Fields(input)
 	for _, w := range words {
-		tree.Insert(word(w))
+		tree.Insert(W(w))
 	}
 	return tree, words
 }
@@ -49,7 +45,7 @@ func makeTree(β int, input string) (*Tree, []string) {
 func allWords(tree *Tree) []string {
 	var got []string
 	tree.Inorder(func(key Key) bool {
-		got = append(got, string(key.(word)))
+		got = append(got, string(key.(W)))
 		return true
 	})
 	return got
@@ -144,7 +140,7 @@ func TestRemoval(t *testing.T) {
 
 	drop := stringset.New("a", "is", "of", "the")
 	for w := range drop {
-		if !tree.Remove(word(w)) {
+		if !tree.Remove(W(w)) {
 			t.Errorf("Remove(%q) returned false, wanted true", w)
 		}
 	}
@@ -153,5 +149,37 @@ func TestRemoval(t *testing.T) {
 	want := stringset.New(words...).Diff(drop).Elements()
 	if diff := pretty.Compare(got, want); diff != "" {
 		t.Errorf("Tree after removal is incorrect (-got, +want)\n%s", diff)
+	}
+}
+
+func TestInorderAfter(t *testing.T) {
+	keys := []Key{Z(8), Z(6), Z(7), Z(5), Z(3), Z(0), Z(9)}
+	tree := NewKeys(0, keys...)
+	tests := []struct {
+		key  Z
+		want []int
+	}{
+		{10, nil},
+		{9, []int{9}},
+		{8, []int{8, 9}},
+		{7, []int{7, 8, 9}},
+		{6, []int{6, 7, 8, 9}},
+		{5, []int{5, 6, 7, 8, 9}},
+		{4, []int{5, 6, 7, 8, 9}},
+		{3, []int{3, 5, 6, 7, 8, 9}},
+		{2, []int{3, 5, 6, 7, 8, 9}},
+		{1, []int{3, 5, 6, 7, 8, 9}},
+		{0, []int{0, 3, 5, 6, 7, 8, 9}},
+		{-1, []int{0, 3, 5, 6, 7, 8, 9}},
+	}
+	for _, test := range tests {
+		var got []int
+		tree.InorderAfter(test.key, func(key Key) bool {
+			got = append(got, int(key.(Z)))
+			return true
+		})
+		if diff := pretty.Compare(got, test.want); diff != "" {
+			t.Errorf("InorderAfter(%v) result differed from expected\n%s", test.key, diff)
+		}
 	}
 }
