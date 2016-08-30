@@ -39,6 +39,7 @@ func BenchmarkInsertRandom(b *testing.B) {
 		for _, β := range balances {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
 				tree, rng := benchTree(β)
+				b.ResetTimer()
 				for i := 0; i < b.N; i++ {
 					tree.Insert(Z(rng.Intn(math.MaxInt32)))
 				}
@@ -50,7 +51,9 @@ func BenchmarkInsertRandom(b *testing.B) {
 func BenchmarkInsertOrdered(b *testing.B) {
 	b.Run("balance", func(b *testing.B) {
 		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) { orderedTree(b, β) })
+			b.Run(fmt.Sprint(β), func(b *testing.B) {
+				orderedTree(b, β)
+			})
 		}
 	})
 }
@@ -71,7 +74,7 @@ func BenchmarkRemoveRandom(b *testing.B) {
 
 func BenchmarkRemoveOrdered(b *testing.B) {
 	b.Run("balance", func(b *testing.B) {
-		for _, β := range balances {
+		for _, β := range balances[1:] {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
 				tree := orderedTree(b, β)
 				b.ResetTimer()
