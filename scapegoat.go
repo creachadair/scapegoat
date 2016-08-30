@@ -34,7 +34,8 @@ const (
 
 // New returns an empty *Tree with the given balancing factor 0 ≤ β ≤ 1000.
 // The balancing factor represents how unbalanced the tree is permitted to be,
-// with 0 being strictest (50% balance) and 1000 being loosest (0% balance).
+// with 0 being strictest (as near as possible to 50% weight balance) and 1000
+// being loosest (no rebalancing).
 //
 // New panics if β < 0 or β > 1000.
 func New(β int) *Tree {
@@ -77,6 +78,9 @@ func toFraction(β int) float64 { return (float64(β) + maxBalance) / fracLimit 
 // size n given the balance factor β.
 func limitFunc(β int) func(int) int {
 	inv := 1 / toFraction(β)
+	if inv == 1 { // int(+Inf) ⇒ undefined
+		return func(n int) int { return n + 1 }
+	}
 	base := math.Log(inv)
 	return func(n int) int { return int(math.Log(float64(n)) / base) }
 }
