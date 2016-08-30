@@ -47,14 +47,14 @@ func ExampleTree_Lookup() {
 }
 
 func ExampleTree_Inorder() {
-	tree := NewKeys(15, W("freaking"), W("eat"), W("those"), W("vegetables"))
+	tree := NewKeys(15, W("eat"), W("those"), W("bloody"), W("vegetables"))
 	tree.Inorder(func(key Key) bool {
 		fmt.Println(key)
 		return true
 	})
 	// Output:
+	// bloody
 	// eat
-	// freaking
 	// those
 	// vegetables
 }
