@@ -95,6 +95,15 @@ func dotTree(w io.Writer, root *node) {
 	fmt.Fprintln(w, "}")
 }
 
+func TestNewKeys(t *testing.T) {
+	tree := NewKeys(200, W("please"), W("fetch"), W("your"), W("slippers"))
+	got := allWords(tree)
+	want := []string{"fetch", "please", "slippers", "your"}
+	if diff := pretty.Compare(got, want); diff != "" {
+		t.Errorf("NewTree produced unexpected output (-got, +want)\n%s", diff)
+	}
+}
+
 func TestBasicProperties(t *testing.T) {
 	// http://www.gutenberg.org/files/1063/1063-h/1063-h.htm
 	tree, words := makeTree(*strictness, `

@@ -13,7 +13,10 @@
 //
 package scapegoat
 
-import "math"
+import (
+	"math"
+	"sort"
+)
 
 // A Key represents an entry in the tree, defined by having a ordering
 // relationship with other keys. An implementation of this interface may carry
@@ -45,15 +48,28 @@ func New(β int) *Tree {
 	return &Tree{β: β, limit: limitFunc(β)}
 }
 
-// NewKeys constructs a *Tree with the given balancing factor and keys.
-// See New for a description of β.
+// NewKeys constructs a *Tree with the given balancing factor and keys.  This
+// is usually faster for a fixed set of keys than inserting the keys one by one
+// into an empty tree.  See New for a description of β.
 func NewKeys(β int, keys ...Key) *Tree {
-	tree := New(β)
-	for _, key := range keys {
-		tree.Insert(key)
+	nodes := make([]*node, len(keys))
+	for i, key := range keys {
+		nodes[i] = &node{key: key}
 	}
+	sort.Sort(nodesByKey(nodes))
+	tree := New(β)
+	tree.root = extract(nodes)
+	tree.size = len(keys)
+	tree.max = len(keys)
 	return tree
 }
+
+// byKey orders a slice of nodes by their keys.
+type nodesByKey []*node
+
+func (b nodesByKey) Len() int           { return len(b) }
+func (b nodesByKey) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b nodesByKey) Less(i, j int) bool { return b[i].key.Less(b[j].key) }
 
 // A Tree is the root of a scapegoat tree. A *Tree is not safe for concurrent
 // use without external synchronization.
