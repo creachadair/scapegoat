@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"sort"
 	"testing"
 )
 
@@ -14,14 +15,6 @@ var balances = []int{0, 50, 100, 150, 200, 250, 500, 800, 1000}
 
 func benchTree(β int) (*Tree, *rand.Rand) {
 	return New(β), rand.New(rand.NewSource(benchSeed))
-}
-
-func orderedTree(b *testing.B, β int) *Tree {
-	tree := New(β)
-	for i := 1; i <= b.N; i++ {
-		tree.Insert(Z(i))
-	}
-	return tree
 }
 
 func randomTree(b *testing.B, β int) (*Tree, []int) {
@@ -35,31 +28,30 @@ func randomTree(b *testing.B, β int) (*Tree, []int) {
 }
 
 func BenchmarkInsertRandom(b *testing.B) {
-	b.Run("balance", func(b *testing.B) {
+	b.Run("β", func(b *testing.B) {
 		for _, β := range balances {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree, rng := benchTree(β)
-				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
-					tree.Insert(Z(rng.Intn(math.MaxInt32)))
-				}
+				randomTree(b, β)
 			})
 		}
 	})
 }
 
 func BenchmarkInsertOrdered(b *testing.B) {
-	b.Run("balance", func(b *testing.B) {
+	b.Run("β", func(b *testing.B) {
 		for _, β := range balances {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				orderedTree(b, β)
+				tree := New(β)
+				for i := 1; i <= b.N; i++ {
+					tree.Insert(Z(i))
+				}
 			})
 		}
 	})
 }
 
 func BenchmarkRemoveRandom(b *testing.B) {
-	b.Run("balance", func(b *testing.B) {
+	b.Run("β", func(b *testing.B) {
 		for _, β := range balances {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
 				tree, values := randomTree(b, β)
@@ -73,12 +65,13 @@ func BenchmarkRemoveRandom(b *testing.B) {
 }
 
 func BenchmarkRemoveOrdered(b *testing.B) {
-	b.Run("balance", func(b *testing.B) {
-		for _, β := range balances[1:] {
+	b.Run("β", func(b *testing.B) {
+		for _, β := range balances {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree := orderedTree(b, β)
+				tree, values := randomTree(b, β)
+				sort.Ints(values)
 				b.ResetTimer()
-				for v := 1; v <= b.N; v++ {
+				for _, v := range values {
 					tree.Remove(Z(v))
 				}
 			})
@@ -86,27 +79,14 @@ func BenchmarkRemoveOrdered(b *testing.B) {
 	})
 }
 
-func BenchmarkLookupRandom(b *testing.B) {
-	b.Run("balance", func(b *testing.B) {
+func BenchmarkLookup(b *testing.B) {
+	b.Run("β", func(b *testing.B) {
 		for _, β := range balances {
 			b.Run(fmt.Sprint(β), func(b *testing.B) {
 				tree, values := randomTree(b, β)
+				sort.Ints(values)
 				b.ResetTimer()
 				for _, v := range values {
-					tree.Lookup(Z(v))
-				}
-			})
-		}
-	})
-}
-
-func BenchmarkLookupOrdered(b *testing.B) {
-	b.Run("balance", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree := orderedTree(b, β)
-				b.ResetTimer()
-				for v := 1; v <= b.N; v++ {
 					tree.Lookup(Z(v))
 				}
 			})
