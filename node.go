@@ -17,12 +17,11 @@ func (n *node) size() int {
 }
 
 // flatten extracts the nodes rooted at n into a slice in order, and returns
-// the resulting slice. The he results are appended to it, thus allowing the
+// the resulting slice. The results are appended to into, thus allowing the
 // caller to preallocate storage:
 //
 // Example:
-//   into := make([]*node, 0, n.size())
-//   n.flatten(into)
+//   into := n.flatten(make([]*node, 0, n.size()))
 //
 // If cap(into) ≥ n.size(), this method does not allocate on the heap.
 func (n *node) flatten(into []*node) []*node {
