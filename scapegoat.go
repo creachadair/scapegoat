@@ -9,7 +9,8 @@
 //
 // It is also relatively memory-efficient, as interior nodes do not require any
 // ancillary metadata for balancing purposes, and the tree itself costs only a
-// few words of bookkeeping overhead beyond the nodes.
+// few words of bookkeeping overhead beyond the nodes. A rebalancing operation
+// requires only a single contiguous vector allocation.
 //
 package scapegoat
 
