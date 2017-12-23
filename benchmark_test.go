@@ -23,84 +23,72 @@ func randomTree(b *testing.B, β int) (*Tree, []Key) {
 }
 
 func BenchmarkNewKeys(b *testing.B) {
-	b.Run("β", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				randomTree(b, β)
-			})
-		}
-	})
+	for _, β := range balances {
+		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
+			randomTree(b, β)
+		})
+	}
 }
 
 func BenchmarkInsertRandom(b *testing.B) {
-	b.Run("β", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				_, values := randomTree(b, β)
-				b.ResetTimer()
-				tree := New(β)
-				for _, v := range values {
-					tree.Insert(v)
-				}
-			})
-		}
-	})
+	for _, β := range balances {
+		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
+			_, values := randomTree(b, β)
+			b.ResetTimer()
+			tree := New(β)
+			for _, v := range values {
+				tree.Insert(v)
+			}
+		})
+	}
 }
 
 func BenchmarkInsertOrdered(b *testing.B) {
-	b.Run("β", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree := New(β)
-				for i := 1; i <= b.N; i++ {
-					tree.Insert(Z(i))
-				}
-			})
-		}
-	})
+	for _, β := range balances {
+		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
+			tree := New(β)
+			for i := 1; i <= b.N; i++ {
+				tree.Insert(Z(i))
+			}
+		})
+	}
 }
 
 func BenchmarkRemoveRandom(b *testing.B) {
-	b.Run("β", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree, values := randomTree(b, β)
-				b.ResetTimer()
-				for _, v := range values {
-					tree.Remove(v)
-				}
-			})
-		}
-	})
+	for _, β := range balances {
+		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
+			tree, values := randomTree(b, β)
+			b.ResetTimer()
+			for _, v := range values {
+				tree.Remove(v)
+			}
+		})
+	}
 }
 
 func BenchmarkRemoveOrdered(b *testing.B) {
-	b.Run("β", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree, values := randomTree(b, β)
-				sort.Sort(keySlice(values))
-				b.ResetTimer()
-				for _, v := range values {
-					tree.Remove(v)
-				}
-			})
-		}
-	})
+	for _, β := range balances {
+		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
+			tree, values := randomTree(b, β)
+			sort.Sort(keySlice(values))
+			b.ResetTimer()
+			for _, v := range values {
+				tree.Remove(v)
+			}
+		})
+	}
 }
 
 func BenchmarkLookup(b *testing.B) {
-	b.Run("β", func(b *testing.B) {
-		for _, β := range balances {
-			b.Run(fmt.Sprint(β), func(b *testing.B) {
-				tree, values := randomTree(b, β)
-				b.ResetTimer()
-				for _, v := range values {
-					tree.Lookup(v)
-				}
-			})
-		}
-	})
+	for _, β := range balances {
+		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
+			tree, values := randomTree(b, β)
+			b.ResetTimer()
+			for _, v := range values {
+				tree.Lookup(v)
+			}
+		})
+	}
 }
 
 type keySlice []Key
