@@ -10,8 +10,7 @@ import (
 	"testing"
 
 	"bitbucket.org/creachadair/stringset"
-
-	"github.com/kylelemons/godebug/pretty"
+	"github.com/google/go-cmp/cmp"
 )
 
 var (
@@ -99,7 +98,7 @@ func TestNewKeys(t *testing.T) {
 	tree := NewKeys(200, W("please"), W("fetch"), W("your"), W("slippers"))
 	got := allWords(tree)
 	want := []string{"fetch", "please", "slippers", "your"}
-	if diff := pretty.Compare(got, want); diff != "" {
+	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("NewTree produced unexpected output (-got, +want)\n%s", diff)
 	}
 }
@@ -134,8 +133,8 @@ bought largely whenever I could`)
 
 	got := allWords(tree)
 	want := stringset.New(words...).Elements()
-	if diff := pretty.Compare(got, want); diff != "" {
-		t.Errorf("Inorder produced unexpected output (-got, +want)\n%s", diff)
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Inorder produced unexpected output (-want, +got)\n%s", diff)
 	}
 }
 
@@ -143,8 +142,8 @@ func TestRemoval(t *testing.T) {
 	tree, words := makeTree(0, `a foolish consistency is the hobgoblin of little minds`)
 
 	got := allWords(tree)
-	if diff := pretty.Compare(got, stringset.New(words...).Elements()); diff != "" {
-		t.Errorf("Original input differs from expected (-got, +want)\n%s", diff)
+	if diff := cmp.Diff(stringset.New(words...).Elements(), got); diff != "" {
+		t.Errorf("Original input differs from expected (-want, +got)\n%s", diff)
 	}
 
 	drop := stringset.New("a", "is", "of", "the")
@@ -156,8 +155,8 @@ func TestRemoval(t *testing.T) {
 
 	got = allWords(tree)
 	want := stringset.New(words...).Diff(drop).Elements()
-	if diff := pretty.Compare(got, want); diff != "" {
-		t.Errorf("Tree after removal is incorrect (-got, +want)\n%s", diff)
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Tree after removal is incorrect (-want, +got)\n%s", diff)
 	}
 }
 
@@ -187,7 +186,7 @@ func TestInorderAfter(t *testing.T) {
 			got = append(got, int(key.(Z)))
 			return true
 		})
-		if diff := pretty.Compare(got, test.want); diff != "" {
+		if diff := cmp.Diff(test.want, got); diff != "" {
 			t.Errorf("InorderAfter(%v) result differed from expected\n%s", test.key, diff)
 		}
 	}
