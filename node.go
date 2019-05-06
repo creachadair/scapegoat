@@ -4,6 +4,7 @@ import "fmt"
 
 type node struct {
 	key         Key
+	value       interface{}
 	left, right *node
 }
 
@@ -77,12 +78,12 @@ func popMinRight(root *node) *node {
 }
 
 // inorder visits the subtree under n inorder, calling f until f returns false.
-func (n *node) inorder(f func(Key) bool) bool {
+func (n *node) inorder(f func(KV) bool) bool {
 	if n == nil {
 		return true
 	} else if ok := n.left.inorder(f); !ok {
 		return false
-	} else if ok := f(n.key); !ok {
+	} else if ok := f(KV{Key: n.key, Value: n.value}); !ok {
 		return false
 	}
 	return n.right.inorder(f)
@@ -108,7 +109,7 @@ func (n *node) pathTo(key Key) []*node {
 
 // inorderAfter visits the elements of the subtree under n not less than key
 // inorder, calling f for each until f returns false.
-func (n *node) inorderAfter(key Key, f func(Key) bool) {
+func (n *node) inorderAfter(key Key, f func(KV) bool) {
 	// Find the path from the root to key. Any nodes greater than or equal to
 	// key must be on or to the right of this path.
 	path := n.pathTo(key)
@@ -116,7 +117,7 @@ func (n *node) inorderAfter(key Key, f func(Key) bool) {
 		cur := path[i]
 		if cur.key.Less(key) {
 			continue
-		} else if ok := f(cur.key); !ok {
+		} else if ok := f(KV{Key: cur.key, Value: cur.value}); !ok {
 			return
 		} else if ok := cur.right.inorder(f); !ok {
 			return

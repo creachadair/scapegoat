@@ -19,9 +19,7 @@ import (
 	"sort"
 )
 
-// A Key represents an entry in the tree, defined by having a ordering
-// relationship with other keys. An implementation of this interface may carry
-// additional data that does not affect comparison.
+// A Key represents a value with an order relationship.
 type Key interface {
 	// Less reports whether the receiver is ordered prior to the argument.
 	// If a.Less(b) == b.Less(a) == false, a and b will be assumed equal.
@@ -30,6 +28,15 @@ type Key interface {
 	// should panic.
 	Less(Key) bool
 }
+
+// A KV combines a key with a value. Values are not interpreted, and may be nil
+// if the key records all the information of interest.
+type KV struct {
+	Key   Key
+	Value interface{}
+}
+
+func (kv KV) node() *node { return &node{key: kv.Key, value: kv.Value} }
 
 const (
 	maxBalance = 1000
@@ -52,16 +59,16 @@ func New(β int) *Tree {
 // NewKeys constructs a *Tree with the given balancing factor and keys.  This
 // is usually faster for a fixed set of keys than inserting the keys one by one
 // into an empty tree.  See New for a description of β.
-func NewKeys(β int, keys ...Key) *Tree {
-	nodes := make([]*node, len(keys))
-	for i, key := range keys {
-		nodes[i] = &node{key: key}
+func NewKeys(β int, kvs ...KV) *Tree {
+	nodes := make([]*node, len(kvs))
+	for i, kv := range kvs {
+		nodes[i] = kv.node()
 	}
 	sort.Sort(nodesByKey(nodes))
 	tree := New(β)
 	tree.root = extract(nodes)
-	tree.size = len(keys)
-	tree.max = len(keys)
+	tree.size = len(kvs)
+	tree.max = len(kvs)
 	return tree
 }
 
@@ -104,10 +111,10 @@ func limitFunc(β int) func(int) int {
 
 // Insert adds key into the tree if it is not already present, and reports
 // whether a new node was added.
-func (t *Tree) Insert(key Key) bool {
+func (t *Tree) Insert(key Key, value interface{}) bool {
 	// We don't yet know whether the insertion will add mass to the tree; we
 	// conservatively assume it might for purposes of choosing a depth limit.
-	ins, ok, _, _ := t.insert(key, false, t.root, t.limit(t.size+1))
+	ins, ok, _, _ := t.insert(&KV{Key: key, Value: value}, false, t.root, t.limit(t.size+1))
 	t.incSize(ok)
 	t.root = ins
 	return ok
@@ -115,8 +122,8 @@ func (t *Tree) Insert(key Key) bool {
 
 // Replace adds key to the tree, updating an existing key if it is already
 // present. Reports whether a new node was added.
-func (t *Tree) Replace(key Key) bool {
-	ins, ok, _, _ := t.insert(key, true, t.root, t.limit(t.size+1))
+func (t *Tree) Replace(key Key, value interface{}) bool {
+	ins, ok, _, _ := t.insert(&KV{Key: key, Value: value}, true, t.root, t.limit(t.size+1))
 	t.incSize(ok)
 	t.root = ins
 	return ok
@@ -141,21 +148,21 @@ func (t *Tree) incSize(inserted bool) {
 // height of the returned node above the point of insertion.
 // If the insertion did not exceed the depth limit, size == 0.
 // Otherwise, size == ins.size() meaning a scapegoat is needed.
-func (t *Tree) insert(key Key, replace bool, root *node, limit int) (ins *node, added bool, size, height int) {
+func (t *Tree) insert(kv *KV, replace bool, root *node, limit int) (ins *node, added bool, size, height int) {
 	// Descending phase: Insert the key into the tree structure.
 	var sib *node
 	if root == nil {
 		if limit < 0 {
 			size = 1
 		}
-		return &node{key: key}, true, size, 0
-	} else if key.Less(root.key) {
-		ins, added, size, height = t.insert(key, replace, root.left, limit-1)
+		return kv.node(), true, size, 0
+	} else if kv.Key.Less(root.key) {
+		ins, added, size, height = t.insert(kv, replace, root.left, limit-1)
 		root.left = ins
 		sib = root.right
 		height++
-	} else if root.key.Less(key) {
-		ins, added, size, height = t.insert(key, replace, root.right, limit-1)
+	} else if root.key.Less(kv.Key) {
+		ins, added, size, height = t.insert(kv, replace, root.right, limit-1)
 		root.right = ins
 		sib = root.left
 		height++
@@ -163,7 +170,7 @@ func (t *Tree) insert(key Key, replace bool, root *node, limit int) (ins *node, 
 		// Replacing an existing node. This cannot introduce a violation, so we
 		// can return immediately without triggering a goat search.
 		if replace {
-			root.key = key
+			root.value = kv.Value
 		}
 		return root, false, 0, 0
 	}
@@ -230,8 +237,9 @@ func (n *node) remove(key Key) (_ *node, ok bool) {
 // Len reports the number of elements stored in the tree.
 func (t *Tree) Len() int { return t.size }
 
-// Lookup reports whether key is present in the tree, and returns it if so.
-func (t *Tree) Lookup(key Key) (Key, bool) {
+// Lookup reports whether key is present in the tree, and returns the value
+// associated with that key, or nil if the key is not present.
+func (t *Tree) Lookup(key Key) (interface{}, bool) {
 	cur := t.root
 	for cur != nil {
 		if key.Less(cur.key) {
@@ -247,15 +255,16 @@ func (t *Tree) Lookup(key Key) (Key, bool) {
 
 // Inorder traverses t inorder and invokes f for each key until either f
 // returns false or no further keys are available.
-func (t *Tree) Inorder(f func(Key) bool) { t.root.inorder(f) }
+func (t *Tree) Inorder(f func(KV) bool) { t.root.inorder(f) }
 
 // InorderAfter traverses t inorder, considering only keys equal to or after
 // key, and invokes f for each key until either f returns false or no further
 // keys are available.
-func (t *Tree) InorderAfter(key Key, f func(Key) bool) { t.root.inorderAfter(key, f) }
+func (t *Tree) InorderAfter(key Key, f func(KV) bool) { t.root.inorderAfter(key, f) }
 
-// Min returns the minimum key in the tree, or nil if the tree is empty.
-func (t *Tree) Min() Key {
+// Min returns the key/value pair in the tree with the minimum key, or nil if
+// the tree is empty.
+func (t *Tree) Min() *KV {
 	if t.root == nil {
 		return nil
 	}
@@ -263,11 +272,12 @@ func (t *Tree) Min() Key {
 	for cur.left != nil {
 		cur = cur.left
 	}
-	return cur.key
+	return &KV{Key: cur.key, Value: cur.value}
 }
 
-// Max returns the maximum key in the tree, or nil if the tree is empty.
-func (t *Tree) Max() Key {
+// Max returns the key/value pair in the tree with the maximum key, or nil if
+// the tree is empty.
+func (t *Tree) Max() *KV {
 	if t.root == nil {
 		return nil
 	}
@@ -275,5 +285,5 @@ func (t *Tree) Max() Key {
 	for cur.right != nil {
 		cur = cur.right
 	}
-	return cur.key
+	return &KV{Key: cur.key, Value: cur.value}
 }

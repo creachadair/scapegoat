@@ -34,8 +34,8 @@ func (n *node) height() int {
 func makeTree(β int, input string) (*Tree, []string) {
 	tree := New(β)
 	words := strings.Fields(input)
-	for _, w := range words {
-		tree.Insert(W(w))
+	for i, w := range words {
+		tree.Insert(W(w), i+1)
 	}
 	return tree, words
 }
@@ -43,8 +43,8 @@ func makeTree(β int, input string) (*Tree, []string) {
 // Export all the words in tree in their stored order.
 func allWords(tree *Tree) []string {
 	var got []string
-	tree.Inorder(func(key Key) bool {
-		got = append(got, string(key.(W)))
+	tree.Inorder(func(kv KV) bool {
+		got = append(got, string(kv.Key.(W)))
 		return true
 	})
 	return got
@@ -95,7 +95,12 @@ func dotTree(w io.Writer, root *node) {
 }
 
 func TestNewKeys(t *testing.T) {
-	tree := NewKeys(200, W("please"), W("fetch"), W("your"), W("slippers"))
+	tree := NewKeys(200,
+		KV{Key: W("please")},
+		KV{Key: W("fetch")},
+		KV{Key: W("your")},
+		KV{Key: W("slippers")},
+	)
 	got := allWords(tree)
 	want := []string{"fetch", "please", "slippers", "your"}
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -161,7 +166,10 @@ func TestRemoval(t *testing.T) {
 }
 
 func TestInorderAfter(t *testing.T) {
-	keys := []Key{Z(8), Z(6), Z(7), Z(5), Z(3), Z(0), Z(9)}
+	keys := []KV{
+		{Key: Z(8)}, {Key: Z(6)}, {Key: Z(7)}, {Key: Z(5)},
+		{Key: Z(3)}, {Key: Z(0)}, {Key: Z(9)},
+	}
 	tree := NewKeys(0, keys...)
 	tests := []struct {
 		key  Z
@@ -182,8 +190,8 @@ func TestInorderAfter(t *testing.T) {
 	}
 	for _, test := range tests {
 		var got []int
-		tree.InorderAfter(test.key, func(key Key) bool {
-			got = append(got, int(key.(Z)))
+		tree.InorderAfter(test.key, func(kv KV) bool {
+			got = append(got, int(kv.Key.(Z)))
 			return true
 		})
 		if diff := cmp.Diff(test.want, got); diff != "" {
