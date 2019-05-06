@@ -9,7 +9,7 @@ type node struct {
 }
 
 // size reports the number of nodes contained in the tree rooted at n.
-// If n == 0, this is defined as 0.
+// If n == nil, this is defined as 0.
 func (n *node) size() int {
 	if n == nil {
 		return 0
