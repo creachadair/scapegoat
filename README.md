@@ -12,6 +12,8 @@ that you can see what the output looks like for different weighting conditions.
 To use this, include the `-dot` flag when running the tests, e.g.,
 
 ```shell
-$ go test -dot w200.dot -balance 200
-$ dot -Tpng -o w200.png w200.dot
+$ for w in 1 100 200 300 400 500 800 1000 ; do
+     go test -dot w"$w".dot -balance $w
+     dot -Tpng -o w"$w".png w"$w".dot
+done
 ```
