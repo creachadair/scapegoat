@@ -1,4 +1,4 @@
-module bitbucket.org/creachadair/scapegoat
+module github.com/creachadair/scapegoat
 
 require (
 	bitbucket.org/creachadair/stringset v0.0.5

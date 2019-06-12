@@ -18,7 +18,7 @@ import (
 	"sort"
 	"testing"
 
-	"bitbucket.org/creachadair/scapegoat/bench"
+	"github.com/creachadair/scapegoat/bench"
 )
 
 const benchSeed = 1471808909908695897

@@ -23,7 +23,7 @@ var (
 	outputDir   = flag.String("output", "", "Output directory (default is '.')")
 )
 
-const thisPackage = "bitbucket.org/creachadair/scapegoat"
+const thisPackage = "github.com/creachadair/scapegoat"
 
 func main() {
 	flag.Parse()

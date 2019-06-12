@@ -1,6 +1,6 @@
 # scapegoat
 
-http://godoc.org/bitbucket.org/creachadair/scapegoat
+http://godoc.org/github.com/creachadair/scapegoat
 
 This repository provides an implementation of Scapegoat Trees, as described in
 https://people.csail.mit.edu/rivest/pubs/GR93.pdf
@@ -16,7 +16,7 @@ mkdir pairtree
 gofmt > pairtree/key.go <<EOF
 package pairtree
 
-//go:generate go run bitbucket.org/creachadair/scapegoat/mktree -p pairtree
+//go:generate go run github.com/creachadair/scapegoat/mktree -p pairtree
 
 // A Key is a pair of string values, ordered lexicographically.
 type Key struct {
