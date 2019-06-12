@@ -1,3 +1,14 @@
+// Package bench_test implements benchmarks for the scapegoat tree
+// implementation with integer keys.
+//
+// To run these tests you must first generate the package:
+//
+//    go generate ./bench
+//
+// Then run the tests normally:
+//
+//    go test -bench=. ./bench
+//
 package bench_test
 
 import (
