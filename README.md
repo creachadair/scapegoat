@@ -30,6 +30,10 @@ EOF
 go generate ./pairtree
 ```
 
+As shown, you must provide a definition for the `Key` type as well as a
+comparison function `keyLess(a, b Key) bool` to compare values of the type.
+The rest of the package is a straightforward copy of the main package, apart
+from changing the name in the package clause.
 
 ## Visualization
 
