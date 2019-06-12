@@ -3,9 +3,6 @@ package scapegoat
 import "fmt"
 
 func ExampleTree_Insert() {
-	// type W string
-	// func (w W) Less(key Key) bool { return w < key.(W) }
-
 	tree := New(200)
 	tree.Insert("never", nil)
 	tree.Insert("say", nil)
