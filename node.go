@@ -96,9 +96,9 @@ func (n *node) pathTo(key Key) []*node {
 	cur := n
 	for cur != nil {
 		path = append(path, cur)
-		if key.Less(cur.key) {
+		if keyLess(key, cur.key) {
 			cur = cur.left
-		} else if cur.key.Less(key) {
+		} else if keyLess(cur.key, key) {
 			cur = cur.right
 		} else {
 			break
@@ -115,7 +115,7 @@ func (n *node) inorderAfter(key Key, f func(KV) bool) {
 	path := n.pathTo(key)
 	for i := len(path) - 1; i >= 0; i-- {
 		cur := path[i]
-		if cur.key.Less(key) {
+		if keyLess(cur.key, key) {
 			continue
 		} else if ok := f(KV{Key: cur.key, Value: cur.value}); !ok {
 			return

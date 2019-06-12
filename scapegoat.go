@@ -19,16 +19,6 @@ import (
 	"sort"
 )
 
-// A Key represents a value with an order relationship.
-type Key interface {
-	// Less reports whether the receiver is ordered prior to the argument.
-	// If a.Less(b) == b.Less(a) == false, a and b will be assumed equal.
-	//
-	// If the receiver and argument are not comparable, the implementation
-	// should panic.
-	Less(Key) bool
-}
-
 // A KV combines a key with a value. Values are not interpreted, and may be nil
 // if the key records all the information of interest.
 type KV struct {
@@ -77,7 +67,7 @@ type nodesByKey []*node
 
 func (b nodesByKey) Len() int           { return len(b) }
 func (b nodesByKey) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
-func (b nodesByKey) Less(i, j int) bool { return b[i].key.Less(b[j].key) }
+func (b nodesByKey) Less(i, j int) bool { return keyLess(b[i].key, b[j].key) }
 
 // A Tree is the root of a scapegoat tree. A *Tree is not safe for concurrent
 // use without external synchronization.
@@ -156,12 +146,12 @@ func (t *Tree) insert(kv *KV, replace bool, root *node, limit int) (ins *node, a
 			size = 1
 		}
 		return kv.node(), true, size, 0
-	} else if kv.Key.Less(root.key) {
+	} else if keyLess(kv.Key, root.key) {
 		ins, added, size, height = t.insert(kv, replace, root.left, limit-1)
 		root.left = ins
 		sib = root.right
 		height++
-	} else if root.key.Less(kv.Key) {
+	} else if keyLess(root.key, kv.Key) {
 		ins, added, size, height = t.insert(kv, replace, root.right, limit-1)
 		root.right = ins
 		sib = root.left
@@ -215,10 +205,10 @@ func (t *Tree) Remove(key Key) bool {
 func (n *node) remove(key Key) (_ *node, ok bool) {
 	if n == nil {
 		return nil, false // nothing to do
-	} else if key.Less(n.key) {
+	} else if keyLess(key, n.key) {
 		n.left, ok = n.left.remove(key)
 		return n, ok
-	} else if n.key.Less(key) {
+	} else if keyLess(n.key, key) {
 		n.right, ok = n.right.remove(key)
 		return n, ok
 	} else if n.left == nil {
@@ -242,9 +232,9 @@ func (t *Tree) Len() int { return t.size }
 func (t *Tree) Lookup(key Key) (interface{}, bool) {
 	cur := t.root
 	for cur != nil {
-		if key.Less(cur.key) {
+		if keyLess(key, cur.key) {
 			cur = cur.left
-		} else if cur.key.Less(key) {
+		} else if keyLess(cur.key, key) {
 			cur = cur.right
 		} else {
 			return cur.key, true
