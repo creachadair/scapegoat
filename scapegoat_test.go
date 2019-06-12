@@ -11,6 +11,7 @@ import (
 
 	"bitbucket.org/creachadair/stringset"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 var (
@@ -35,7 +36,7 @@ func makeTree(β int, input string) (*Tree, []string) {
 	tree := New(β)
 	words := strings.Fields(input)
 	for i, w := range words {
-		tree.Insert(W(w), i+1)
+		tree.Insert(w, i+1)
 	}
 	return tree, words
 }
@@ -44,7 +45,7 @@ func makeTree(β int, input string) (*Tree, []string) {
 func allWords(tree *Tree) []string {
 	var got []string
 	tree.Inorder(func(kv KV) bool {
-		got = append(got, string(kv.Key.(W)))
+		got = append(got, kv.Key)
 		return true
 	})
 	return got
@@ -96,10 +97,10 @@ func dotTree(w io.Writer, root *node) {
 
 func TestNewKeys(t *testing.T) {
 	tree := NewKeys(200,
-		KV{Key: W("please")},
-		KV{Key: W("fetch")},
-		KV{Key: W("your")},
-		KV{Key: W("slippers")},
+		KV{Key: "please"},
+		KV{Key: "fetch"},
+		KV{Key: "your"},
+		KV{Key: "slippers"},
 	)
 	got := allWords(tree)
 	want := []string{"fetch", "please", "slippers", "your"}
@@ -153,7 +154,7 @@ func TestRemoval(t *testing.T) {
 
 	drop := stringset.New("a", "is", "of", "the")
 	for w := range drop {
-		if !tree.Remove(W(w)) {
+		if !tree.Remove(w) {
 			t.Errorf("Remove(%q) returned false, wanted true", w)
 		}
 	}
@@ -167,34 +168,35 @@ func TestRemoval(t *testing.T) {
 
 func TestInorderAfter(t *testing.T) {
 	keys := []KV{
-		{Key: Z(8)}, {Key: Z(6)}, {Key: Z(7)}, {Key: Z(5)},
-		{Key: Z(3)}, {Key: Z(0)}, {Key: Z(9)},
+		{Key: "8"}, {Key: "6"}, {Key: "7"}, {Key: "5"},
+		{Key: "3"}, {Key: "0"}, {Key: "9"},
 	}
 	tree := NewKeys(0, keys...)
 	tests := []struct {
-		key  Z
-		want []int
+		key  Key
+		want string
 	}{
-		{10, nil},
-		{9, []int{9}},
-		{8, []int{8, 9}},
-		{7, []int{7, 8, 9}},
-		{6, []int{6, 7, 8, 9}},
-		{5, []int{5, 6, 7, 8, 9}},
-		{4, []int{5, 6, 7, 8, 9}},
-		{3, []int{3, 5, 6, 7, 8, 9}},
-		{2, []int{3, 5, 6, 7, 8, 9}},
-		{1, []int{3, 5, 6, 7, 8, 9}},
-		{0, []int{0, 3, 5, 6, 7, 8, 9}},
-		{-1, []int{0, 3, 5, 6, 7, 8, 9}},
+		{"A", ""},
+		{"9", "9"},
+		{"8", "8 9"},
+		{"7", "7 8 9"},
+		{"6", "6 7 8 9"},
+		{"5", "5 6 7 8 9"},
+		{"4", "5 6 7 8 9"},
+		{"3", "3 5 6 7 8 9"},
+		{"2", "3 5 6 7 8 9"},
+		{"1", "3 5 6 7 8 9"},
+		{"0", "0 3 5 6 7 8 9"},
+		{"", "0 3 5 6 7 8 9"},
 	}
 	for _, test := range tests {
-		var got []int
+		want := strings.Fields(test.want)
+		var got []string
 		tree.InorderAfter(test.key, func(kv KV) bool {
-			got = append(got, int(kv.Key.(Z)))
+			got = append(got, kv.Key)
 			return true
 		})
-		if diff := cmp.Diff(test.want, got); diff != "" {
+		if diff := cmp.Diff(want, got, cmpopts.EquateEmpty()); diff != "" {
 			t.Errorf("InorderAfter(%v) result differed from expected\n%s", test.key, diff)
 		}
 	}

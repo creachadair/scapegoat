@@ -2,29 +2,21 @@ package scapegoat
 
 import "fmt"
 
-type W string
-
-func (w W) Less(key Key) bool { return w < key.(W) }
-
-type Z int
-
-func (z Z) Less(key Key) bool { return z < key.(Z) }
-
 func ExampleTree_Insert() {
 	// type W string
 	// func (w W) Less(key Key) bool { return w < key.(W) }
 
 	tree := New(200)
-	tree.Insert(W("never"), nil)
-	tree.Insert(W("say"), nil)
-	tree.Insert(W("never"), nil)
+	tree.Insert("never", nil)
+	tree.Insert("say", nil)
+	tree.Insert("never", nil)
 	fmt.Println("tree.Len() =", tree.Len())
 	// Output:
 	// tree.Len() = 2
 }
 
 func ExampleTree_Remove() {
-	key := W("Aloysius")
+	const key = "Aloysius"
 	tree := New(1)
 	fmt.Println("inserted:", tree.Insert(key, nil))
 	fmt.Println("removed:", tree.Remove(key))
@@ -36,10 +28,10 @@ func ExampleTree_Remove() {
 }
 
 func ExampleTree_Lookup() {
-	tree := NewKeys(1, KV{Key: W("mom")})
-	hit, ok := tree.Lookup(W("mom"))
+	tree := NewKeys(1, KV{Key: "mom"})
+	hit, ok := tree.Lookup("mom")
 	fmt.Printf("%v, %v\n", hit, ok)
-	miss, ok := tree.Lookup(W("dad"))
+	miss, ok := tree.Lookup("dad")
 	fmt.Printf("%v, %v\n", miss, ok)
 	// Output:
 	// mom, true
@@ -48,10 +40,10 @@ func ExampleTree_Lookup() {
 
 func ExampleTree_Inorder() {
 	tree := NewKeys(15,
-		KV{Key: W("eat")},
-		KV{Key: W("those")},
-		KV{Key: W("bloody")},
-		KV{Key: W("vegetables")},
+		KV{Key: "eat"},
+		KV{Key: "those"},
+		KV{Key: "bloody"},
+		KV{Key: "vegetables"},
 	)
 	tree.Inorder(func(kv KV) bool {
 		fmt.Println(kv.Key)
@@ -66,17 +58,17 @@ func ExampleTree_Inorder() {
 
 func ExampleTree_Min() {
 	tree := NewKeys(50,
-		KV{Key: Z(1814)},
-		KV{Key: Z(1956)},
-		KV{Key: Z(955)},
-		KV{Key: Z(1066)},
-		KV{Key: Z(2016)},
+		KV{Key: "1814"},
+		KV{Key: "1956"},
+		KV{Key: "0955"},
+		KV{Key: "1066"},
+		KV{Key: "2016"},
 	)
 	fmt.Println("len:", tree.Len())
 	fmt.Println("min:", tree.Min().Key)
 	fmt.Println("max:", tree.Max().Key)
 	// Output:
 	// len: 5
-	// min: 955
+	// min: 0955
 	// max: 2016
 }
