@@ -25,13 +25,13 @@ func ExampleTree_Remove() {
 }
 
 func ExampleTree_Lookup() {
-	tree := NewKeys(1, KV{Key: "mom"})
+	tree := NewKeys(1, KV{Key: "mom", Value: 1})
 	hit, ok := tree.Lookup("mom")
 	fmt.Printf("%v, %v\n", hit, ok)
 	miss, ok := tree.Lookup("dad")
 	fmt.Printf("%v, %v\n", miss, ok)
 	// Output:
-	// mom, true
+	// 1, true
 	// <nil>, false
 }
 

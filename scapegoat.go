@@ -229,7 +229,7 @@ func (t *Tree) Len() int { return t.size }
 
 // Lookup reports whether key is present in the tree, and returns the value
 // associated with that key, or nil if the key is not present.
-func (t *Tree) Lookup(key Key) (Value, bool) {
+func (t *Tree) Lookup(key Key) (v Value, ok bool) {
 	cur := t.root
 	for cur != nil {
 		if keyLess(key, cur.key) {
@@ -237,10 +237,11 @@ func (t *Tree) Lookup(key Key) (Value, bool) {
 		} else if keyLess(cur.key, key) {
 			cur = cur.right
 		} else {
-			return cur.key, true
+			v, ok = cur.value, true
+			return
 		}
 	}
-	return nil, false
+	return
 }
 
 // Inorder traverses t inorder and invokes f for each key until either f

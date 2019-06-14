@@ -142,6 +142,16 @@ bought largely whenever I could`)
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Inorder produced unexpected output (-want, +got)\n%s", diff)
 	}
+
+	// Verify that the values are of the correct type.
+	for _, word := range want {
+		v, ok := tree.Lookup(word)
+		if !ok {
+			t.Errorf("Word %q not found", word)
+		} else if _, ok := v.(int); !ok {
+			t.Errorf("Word %q value is %T, want int", word, v)
+		}
+	}
 }
 
 func TestRemoval(t *testing.T) {
