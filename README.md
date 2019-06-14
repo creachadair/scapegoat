@@ -7,9 +7,10 @@ https://people.csail.mit.edu/rivest/pubs/GR93.pdf
 
 ## Generated Code
 
-The top-level `scapegoat` package implements a tree with `string` keys.
-However, the implementation will work with any ordered type. To generate
-a package for your own type, use `go generate`:
+The top-level `scapegoat` package implements a tree with `string` keys and
+arbitrary values.  However, the implementation will work with any ordered key
+type, and you can substitute a more specific value type. To generate a package
+for your own type, use `go generate`:
 
 ```shell
 mkdir pairtree
