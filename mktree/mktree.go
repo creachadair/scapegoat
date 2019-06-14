@@ -55,7 +55,7 @@ func main() {
 	)
 	for _, src := range pkg.GoFiles {
 		base := filepath.Base(src)
-		if strings.HasPrefix(base, "key_") {
+		if base == "keyvalue.go" {
 			continue // skip the built-in default.
 		}
 		data, err := ioutil.ReadFile(src)
