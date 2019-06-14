@@ -24,7 +24,7 @@ import (
 const benchSeed = 1471808909908695897
 
 // Trial values of β for load-testing tree operations.
-var balances = []int{0, 50, 100, 150, 200, 225, 250, 275, 500, 800, 1000}
+var balances = []int{0, 50, 100, 150, 200, 250, 300, 500, 800, 1000}
 
 func randomTree(b *testing.B, β int) (*bench.Tree, []bench.KV) {
 	rng := rand.New(rand.NewSource(benchSeed))
