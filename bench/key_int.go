@@ -6,3 +6,6 @@ package bench
 type Key = int
 
 func keyLess(a, b int) bool { return a < b }
+
+// Value defines an int as a value for a scapegoat tree.
+type Value = int

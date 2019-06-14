@@ -61,7 +61,7 @@ func BenchmarkInsertOrdered(b *testing.B) {
 		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
 			tree := bench.New(β)
 			for i := 1; i <= b.N; i++ {
-				tree.Insert(i, nil)
+				tree.Insert(i, i)
 			}
 		})
 	}
