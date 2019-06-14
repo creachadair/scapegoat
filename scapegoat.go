@@ -23,7 +23,7 @@ import (
 // if the key records all the information of interest.
 type KV struct {
 	Key   Key
-	Value interface{}
+	Value Value
 }
 
 func (kv KV) node() *node { return &node{key: kv.Key, value: kv.Value} }
@@ -101,7 +101,7 @@ func limitFunc(β int) func(int) int {
 
 // Insert adds key into the tree if it is not already present, and reports
 // whether a new node was added.
-func (t *Tree) Insert(key Key, value interface{}) bool {
+func (t *Tree) Insert(key Key, value Value) bool {
 	// We don't yet know whether the insertion will add mass to the tree; we
 	// conservatively assume it might for purposes of choosing a depth limit.
 	ins, ok, _, _ := t.insert(&KV{Key: key, Value: value}, false, t.root, t.limit(t.size+1))
@@ -112,7 +112,7 @@ func (t *Tree) Insert(key Key, value interface{}) bool {
 
 // Replace adds key to the tree, updating an existing key if it is already
 // present. Reports whether a new node was added.
-func (t *Tree) Replace(key Key, value interface{}) bool {
+func (t *Tree) Replace(key Key, value Value) bool {
 	ins, ok, _, _ := t.insert(&KV{Key: key, Value: value}, true, t.root, t.limit(t.size+1))
 	t.incSize(ok)
 	t.root = ins
@@ -229,7 +229,7 @@ func (t *Tree) Len() int { return t.size }
 
 // Lookup reports whether key is present in the tree, and returns the value
 // associated with that key, or nil if the key is not present.
-func (t *Tree) Lookup(key Key) (interface{}, bool) {
+func (t *Tree) Lookup(key Key) (Value, bool) {
 	cur := t.root
 	for cur != nil {
 		if keyLess(key, cur.key) {

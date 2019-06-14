@@ -7,3 +7,8 @@ type Key = string
 
 // keyLess reports whether a is ordered prior to b.
 func keyLess(a, b Key) bool { return a < b }
+
+// Value defines an arbitrary value for a scapegoat tree. This is the default
+// value type for the base package in the module. Use the mktree tool to
+// generate packages with other value types.
+type Value = interface{}

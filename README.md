@@ -26,14 +26,17 @@ type Key struct {
 func keyLess(a, b Key) bool {
   return a.A < b.A || (a.A == b.A && a.B < b.B)
 }
+
+// A Value is an integer weight.
+type Value int
 EOF
 go generate ./pairtree
 ```
 
-As shown, you must provide a definition for the `Key` type as well as a
-comparison function `keyLess(a, b Key) bool` to compare values of the type.
-The rest of the package is a straightforward copy of the main package, apart
-from changing the name in the package clause.
+As shown, you must provide a definition for the `Key` and `Value` types, as
+well as a comparison function `keyLess(a, b Key) bool` to compare values of the
+`Key` type.  The rest of the package is a straightforward copy of the main
+package, apart from changing the name in the package clause.
 
 ## Visualization
 

@@ -4,7 +4,7 @@ import "fmt"
 
 type node struct {
 	key         Key
-	value       interface{}
+	value       Value
 	left, right *node
 }
 
