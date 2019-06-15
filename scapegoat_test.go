@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"testing"
 
@@ -18,6 +19,7 @@ import (
 var (
 	strictness = flag.Int("balance", 100, "Balancing factor")
 	dotFile    = flag.String("dot", "", "Emit DOT output to this file")
+	sortWords  = flag.Bool("sort", false, "Sort input words before insertion")
 )
 
 func (n *node) height() int {
@@ -36,6 +38,9 @@ func (n *node) height() int {
 func makeTree(β int, input string) (*Tree, []string) {
 	tree := New(β)
 	words := strings.Fields(input)
+	if *sortWords {
+		sort.Strings(words)
+	}
 	for i, w := range words {
 		tree.Insert(w, i+1)
 	}
