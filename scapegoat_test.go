@@ -101,8 +101,8 @@ func dotTree(w io.Writer, root *node) {
 	fmt.Fprintln(w, "}")
 }
 
-func TestNewKeys(t *testing.T) {
-	tree := NewKeys(200,
+func TestNew(t *testing.T) {
+	tree := New(200,
 		KV{Key: "please"},
 		KV{Key: "fetch"},
 		KV{Key: "your"},
@@ -169,7 +169,7 @@ func TestInorderAfter(t *testing.T) {
 		{Key: "8"}, {Key: "6"}, {Key: "7"}, {Key: "5"},
 		{Key: "3"}, {Key: "0"}, {Key: "9"},
 	}
-	tree := NewKeys(0, keys...)
+	tree := New(0, keys...)
 	tests := []struct {
 		key  Key
 		want string

@@ -25,7 +25,7 @@ func ExampleTree_Remove() {
 }
 
 func ExampleTree_Lookup() {
-	tree := NewKeys(1, KV{Key: "mom", Value: 1})
+	tree := New(1, KV{Key: "mom", Value: 1})
 	hit, ok := tree.Lookup("mom")
 	fmt.Printf("%v, %v\n", hit, ok)
 	miss, ok := tree.Lookup("dad")
@@ -36,7 +36,7 @@ func ExampleTree_Lookup() {
 }
 
 func ExampleTree_Inorder() {
-	tree := NewKeys(15,
+	tree := New(15,
 		KV{Key: "eat"},
 		KV{Key: "those"},
 		KV{Key: "bloody"},
@@ -54,7 +54,7 @@ func ExampleTree_Inorder() {
 }
 
 func ExampleTree_Min() {
-	tree := NewKeys(50,
+	tree := New(50,
 		KV{Key: "1814"},
 		KV{Key: "1956"},
 		KV{Key: "0955"},

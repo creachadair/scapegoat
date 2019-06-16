@@ -32,10 +32,10 @@ func randomTree(b *testing.B, β int) (*bench.Tree, []bench.KV) {
 	for i := range values {
 		values[i].Key = rng.Intn(math.MaxInt32)
 	}
-	return bench.NewKeys(β, values...), values
+	return bench.New(β, values...), values
 }
 
-func BenchmarkNewKeys(b *testing.B) {
+func BenchmarkNew(b *testing.B) {
 	for _, β := range balances {
 		b.Run(fmt.Sprintf("β=%d", β), func(b *testing.B) {
 			randomTree(b, β)

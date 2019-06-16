@@ -33,41 +33,34 @@ const (
 	fracLimit  = 2 * maxBalance
 )
 
-// New returns an empty *Tree with the given balancing factor 0 ≤ β ≤ 1000.
+// New returns *Tree with the given balancing factor 0 ≤ β ≤ 1000 and keys.
 // The balancing factor represents how unbalanced the tree is permitted to be,
 // with 0 being strictest (as near as possible to 50% weight balance) and 1000
 // being loosest (no rebalancing).
 //
 // New panics if β < 0 or β > 1000.
-func New(β int) *Tree {
+func New(β int, kvs ...KV) *Tree {
 	if β < 0 || β > maxBalance {
 		panic("β out of range")
 	}
-	return &Tree{β: β, limit: limitFunc(β)}
-}
-
-// NewKeys constructs a *Tree with the given balancing factor and keys.  This
-// is usually faster for a fixed set of keys than inserting the keys one by one
-// into an empty tree.  See New for a description of β.
-func NewKeys(β int, kvs ...KV) *Tree {
-	nodes := make([]*node, len(kvs))
-	for i, kv := range kvs {
-		nodes[i] = kv.node()
+	tree := &Tree{
+		β:     β,
+		limit: limitFunc(β),
+		size:  len(kvs),
+		max:   len(kvs),
 	}
-	sort.Sort(nodesByKey(nodes))
-	tree := New(β)
-	tree.root = extract(nodes)
-	tree.size = len(kvs)
-	tree.max = len(kvs)
+	if len(kvs) != 0 {
+		nodes := make([]*node, len(kvs))
+		for i, kv := range kvs {
+			nodes[i] = kv.node()
+		}
+		sort.Slice(nodes, func(i, j int) bool {
+			return keyLess(nodes[i].key, nodes[j].key)
+		})
+		tree.root = extract(nodes)
+	}
 	return tree
 }
-
-// byKey orders a slice of nodes by their keys.
-type nodesByKey []*node
-
-func (b nodesByKey) Len() int           { return len(b) }
-func (b nodesByKey) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
-func (b nodesByKey) Less(i, j int) bool { return keyLess(b[i].key, b[j].key) }
 
 // A Tree is the root of a scapegoat tree. A *Tree is not safe for concurrent
 // use without external synchronization.
