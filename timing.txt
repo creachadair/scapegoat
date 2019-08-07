@@ -1,0 +1,56 @@
+Timing results comparing the implementation with interfaces to the generated
+code implementation.
+
+BEFORE: Key interface.
+AFTER:  Generated code.
+
+BENCHMARK                          BEFORE   AFTER    SPEEDUP (%)
+BenchmarkInsertRandom/β=0-12       4423     3785     14.4
+BenchmarkInsertRandom/β=50-12      1132     956      15.5
+BenchmarkInsertRandom/β=100-12     1141     879      23.0
+BenchmarkInsertRandom/β=150-12     1018     834      18.1
+BenchmarkInsertRandom/β=200-12     1014     822      18.9
+BenchmarkInsertRandom/β=250-12     1002     823      17.9
+BenchmarkInsertRandom/β=500-12     1029     834      19.0
+BenchmarkInsertRandom/β=800-12     1015     837      17.5
+BenchmarkInsertRandom/β=1000-12    1012     819      19.1
+
+BenchmarkInsertOrdered/β=0-12      41948    41466    ~
+BenchmarkInsertOrdered/β=50-12     2601     2432     6.5
+BenchmarkInsertOrdered/β=100-12    1792     1591     11.2
+BenchmarkInsertOrdered/β=150-12    1383     1220     11.8
+BenchmarkInsertOrdered/β=200-12    1152     1113     3.4
+BenchmarkInsertOrdered/β=250-12    1019     1017     ~
+BenchmarkInsertOrdered/β=500-12    863      633      26.7
+BenchmarkInsertOrdered/β=800-12    1235     761      38.4
+BenchmarkInsertOrdered/β=1000-12   165710   193146   -16.6
+
+BenchmarkRemoveRandom/β=0-12       1204     757      37.1
+BenchmarkRemoveRandom/β=50-12      1190     844      29.1
+BenchmarkRemoveRandom/β=100-12     1205     852      29.3
+BenchmarkRemoveRandom/β=150-12     1211     773      36.2
+BenchmarkRemoveRandom/β=200-12     1203     790      34.3
+BenchmarkRemoveRandom/β=250-12     1208     949      21.4
+BenchmarkRemoveRandom/β=500-12     1239     855      31.0
+BenchmarkRemoveRandom/β=800-12     1262     1468     -16.3
+BenchmarkRemoveRandom/β=1000-12    1024     860      16.0
+
+BenchmarkRemoveOrdered/β=0-12      257      162      37.0
+BenchmarkRemoveOrdered/β=50-12     256      158      38.3
+BenchmarkRemoveOrdered/β=100-12    260      164      36.9
+BenchmarkRemoveOrdered/β=150-12    264      167      36.7
+BenchmarkRemoveOrdered/β=200-12    262      172      34.4
+BenchmarkRemoveOrdered/β=250-12    271      179      33.9
+BenchmarkRemoveOrdered/β=500-12    297      202      32.0
+BenchmarkRemoveOrdered/β=800-12    330      250      24.2
+BenchmarkRemoveOrdered/β=1000-12   375      297      20.8
+
+BenchmarkLookup/β=0-12             1305     778      40.4
+BenchmarkLookup/β=50-12            1293     777      39.9
+BenchmarkLookup/β=100-12           1288     786      39.0
+BenchmarkLookup/β=150-12           1284     782      39.1
+BenchmarkLookup/β=200-12           1279     781      38.9
+BenchmarkLookup/β=250-12           1001     790      21.1
+BenchmarkLookup/β=500-12           1005     782      22.2
+BenchmarkLookup/β=800-12           1289     814      36.9
+BenchmarkLookup/β=1000-12          1012     802      20.8
