@@ -1,7 +1,7 @@
 module github.com/creachadair/scapegoat
 
 require (
-	bitbucket.org/creachadair/stringset v0.0.7
-	github.com/google/go-cmp v0.3.0
-	golang.org/x/tools v0.0.0-20190618233249-04b924abaa25
+	bitbucket.org/creachadair/stringset v0.0.8
+	github.com/google/go-cmp v0.3.1
+	golang.org/x/tools v0.0.0-20190826060629-95c3470cfb70
 )
