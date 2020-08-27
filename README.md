@@ -1,6 +1,7 @@
 # scapegoat
 
-http://godoc.org/github.com/creachadair/scapegoat
+[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/creachadair/scapegoat)
+[![Go Report Card](https://goreportcard.com/badge/github.com/creachadair/atomicfile)](https://goreportcard.com/report/github.com/creachadair/scapegoat)
 
 This repository provides an implementation of Scapegoat Trees, as described in
 https://people.csail.mit.edu/rivest/pubs/GR93.pdf
